@@ -6,6 +6,7 @@ import com.security.security.dto.response.ResponseDto;
 import com.security.security.dto.request.user;
 import com.security.security.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public String login(@RequestBody user requestDto){
+    public ResponseEntity<String> register(@RequestBody user requestDto){
         return authenticationService.register(requestDto);
     }
 

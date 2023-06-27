@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class AppExceptionHandler {
 
 

@@ -1,6 +1,7 @@
 package com.security.security.controller;
 
 import com.security.security.dto.request.LoginRequestDto;
+import com.security.security.dto.request.user;
 import com.security.security.dto.response.ResponseDto;
 import com.security.security.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,11 @@ public class LoginController {
       return   authenticationService.login(requestDto);
 
     }
+
+
+//    @PostMapping("/register")
+//    public String register(@org.springframework.web.bind.annotation.RequestBody user requestDto){
+//        return authenticationService.register(requestDto);
+//    }
 }
 
