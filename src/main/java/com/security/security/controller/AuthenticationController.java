@@ -7,10 +7,9 @@ import com.security.security.dto.request.user;
 import com.security.security.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/authentication")
@@ -41,6 +40,12 @@ public class AuthenticationController {
 
     public ResponseDto register(@RequestBody user requestDto){
         return authenticationService.register(requestDto);
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseDto logout(@RequestHeader("token") String token){
+        return authenticationService.logout(token);
     }
 
 

@@ -5,6 +5,8 @@ import com.security.security.dto.request.user;
 import com.security.security.dto.response.ResponseDto;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface AuthenticationService {
 
     ResponseDto login(LoginRequestDto requestDto);
@@ -15,6 +17,6 @@ public interface AuthenticationService {
 
 
 
-    String logout();
+    ResponseDto logout( String token);
 
 }

@@ -179,4 +179,27 @@ public class ForgerockServiceImpl implements ForgerockService{
 
         return responseDto;
     }
+
+    @Override
+    public ResponseDto logout(String token) {
+
+        System.out.println("yes");
+
+        String uri = "http://test.narayanatutorial.com:8991/am/json/sessions?_action=logout";
+
+        Map<String, List<String>> requestToken = new HashMap<>();
+        requestToken.put("iPlanetDirectoryPro",List.of(token));
+
+        ResponseEntity<String> stringResponseEntity = apiCallUtil.callAPI(HttpMethod.POST,requestToken, null, uri, null);
+
+        ResponseDto responseDto =  ResponseDto.builder()
+                .status(true)
+                .message("Successful")
+                .data(stringResponseEntity.getBody())
+                .build();
+
+
+
+        return responseDto;
+    }
 }

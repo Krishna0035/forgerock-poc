@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -20,8 +21,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private LoginService loginService;
 
-
-
+    @Autowired
+    private LogoutService logoutService;
 
     @Autowired
     private RegisterService registerService;
@@ -33,6 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+
     public ResponseDto adminLogin(LoginRequestDto requestDto) {
         return loginService.adminLogin(requestDto);
     }
@@ -44,7 +46,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String logout() {
-        return null;
+    public ResponseDto logout(String token) {
+//        System.out.println("yes");
+//
+//         String uri = "http://test.narayanatutorial.com:8991/am/json/sessions?_action=logout";
+//
+//        Map<String, List<String>> requestToken = new HashMap<>();
+//        requestToken.put("iPlanetDirectoryPro",List.of(token));
+//
+//        ResponseEntity<String> stringResponseEntity = apiCallUtil.callAPI(HttpMethod.POST,requestToken, null, uri, null);
+
+        return logoutService.logout(token);
+
     }
 }

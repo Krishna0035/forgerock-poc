@@ -44,8 +44,10 @@ public class SecurityConfig {
             "/swagger-ui/swagger-initializer.js",
             "/bus/v3/api-docs/", "/add/password","/swagger-ui/swagger-ui-standalone-preset.js",
 
+
             "/webjars/**","/swagger-ui/swagger-ui-bundle.js","/v3/api-docs/swagger-config","/v3/api-docs","/authentication/login/admin","/authentication/register",
             "/authentication/login", "/login", "/login.jsp","/loginnn","/party/customer","/swagger-ui/favicon-32x32.png","/demo"};
+
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;

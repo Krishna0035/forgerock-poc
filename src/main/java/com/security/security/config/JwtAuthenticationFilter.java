@@ -200,7 +200,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 		List<String> roles = gson.fromJson(gson.toJson(map.get("roles")), List.class);
 
-		if(roles.size()>0 && roles.contains("ui-realm-admin")){
+		if(!Objects.isNull(roles) && roles.size()>0 && roles.contains("ui-realm-admin")){
 			return "ROLE_ADMIN";
 		}else {
 			return "";

@@ -17,4 +17,7 @@ public interface ForgerockService {
 
     ResponseDto register(user registerRequestDto);
 
+
+    ResponseDto logout(String token);
+
 }
