@@ -21,4 +21,11 @@ public class TestController {
     public String test(@RequestHeader("token") String token,@RequestHeader("username") String username){
         return "Hello";
     }
+
+
+    @GetMapping("/admin")
+    @SecurityRequirement(name = "bearer-key")
+    public String admintest(@RequestHeader("token") String token,@RequestHeader("username") String username){
+        return "Hello";
+    }
 }

@@ -1,23 +1,17 @@
-package com.security.security;
+package com.security.security.config;
 
 
 
 import com.google.gson.Gson;
-import com.security.security.config.SecurityConfig;
 import com.security.security.dto.UserToken;
 import com.security.security.dto.response.ResponseDto;
-import com.security.security.entity.User;
 import com.security.security.externalservice.ForgerockService;
-import com.security.security.repository.UserRepository;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,9 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,16 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 //	@Autowired
 //	private JwtUserDetailService jwtUserDetailService;
-	
-	@Autowired
-	private JwtUtils jwtUtils;
+
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		return Arrays.asList(SecurityConfig.URLS_THAT_DONT_NEED_AUTHENTICATION).contains(request.getRequestURI());
 	}
-	@Autowired
-	private UserRepository userRepository;
+
 
 	@Value("${active}")
 	private Integer active;
@@ -105,7 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 
 
-			boolean isTokenActiveAndUserActiveBool =isValidToken(requestTokenHeader,username);
+			String role =isValidToken(requestTokenHeader,username);
 
 
 			Object principle = getPrinciple(requestTokenHeader,username);
@@ -114,11 +105,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 //
 //			UserDetails userDetails = (UserDetails) responseMap.get("userDetails");
 
-			if (isTokenActiveAndUserActiveBool)
+			if (role.equals("ROLE_ADMIN") || role.equals("ROLE_USER"))
 			{
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						principle, null, Arrays.asList("ROLE_USER").stream()
-						.map(role -> new SimpleGrantedAuthority(role))
+						principle, null, Arrays.asList(role).stream()
+						.map(r -> new SimpleGrantedAuthority(r))
 						.collect(Collectors.toList()));
 				usernamePasswordAuthenticationToken
 						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -184,20 +175,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 
 
-	private boolean isValidToken(String token,String username){
+	private String isValidToken(String token,String username){
 
 		ResponseDto userDetails = forgerockService.getUserDetails(token, username);
 
-		Map<String ,Object> map = gson.fromJson(gson.toJson(userDetails.getData()), Map.class);
+		Map<String ,Object> map = gson.fromJson(String.valueOf(userDetails.getData()), Map.class);
 
 		List<String> roles = gson.fromJson(gson.toJson(map.get("roles")), List.class);
 
-		if(roles.size()>0 && roles.contains("ui-self-service-user")){
-			return true;
+		if(!Objects.isNull(roles)  && roles.size()>0 && roles.contains("ui-self-service-user")){
+			return "ROLE_USER";
 		}else {
-			return false;
+			return isValidTokenForAdmin( token, username);
 		}
 
 	}
 
+
+	private String  isValidTokenForAdmin(String token,String username){
+
+		ResponseDto userDetails = forgerockService.getAdminDetails(token, username);
+
+		Map<String ,Object> map = gson.fromJson(String.valueOf(userDetails.getData()), Map.class);
+
+		List<String> roles = gson.fromJson(gson.toJson(map.get("roles")), List.class);
+
+		if(roles.size()>0 && roles.contains("ui-realm-admin")){
+			return "ROLE_ADMIN";
+		}else {
+			return "";
+		}
+
+	}
 }

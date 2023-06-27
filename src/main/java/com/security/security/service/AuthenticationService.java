@@ -8,7 +8,11 @@ import org.springframework.http.ResponseEntity;
 public interface AuthenticationService {
 
     ResponseDto login(LoginRequestDto requestDto);
-    ResponseEntity<String> register(user registerRequestDto);
+
+
+    ResponseDto adminLogin(LoginRequestDto requestDto);
+    ResponseDto register(user registerRequestDto);
+
 
 
     String logout();

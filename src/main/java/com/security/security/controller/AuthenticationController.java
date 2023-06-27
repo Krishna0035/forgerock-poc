@@ -20,12 +20,26 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseDto login(@RequestBody LoginRequestDto requestDto){
-        return authenticationService.login(requestDto);
+    public ResponseDto login(@RequestBody LoginRequestDto requestDto) {
+        // Perform authentication logic (e.g., using Spring Security authentication manager)
+
+        return   authenticationService.login(requestDto);
+
     }
 
+
+    @PostMapping("/login/admin")
+    public ResponseDto adminLogin(@RequestBody LoginRequestDto requestDto) {
+        // Perform authentication logic (e.g., using Spring Security authentication manager)
+
+        return   authenticationService.adminLogin(requestDto);
+
+    }
+
+
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody user requestDto){
+
+    public ResponseDto register(@RequestBody user requestDto){
         return authenticationService.register(requestDto);
     }
 

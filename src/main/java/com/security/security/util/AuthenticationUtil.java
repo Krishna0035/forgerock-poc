@@ -1,4 +1,4 @@
-package com.security.security;
+package com.security.security.util;
 
 
 import com.security.security.dto.UserToken;

@@ -20,8 +20,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private LoginService loginService;
 
+
+
+
     @Autowired
-    private ApiCallUtil apiCallUtil;
+    private RegisterService registerService;
 
 
     @Override
@@ -30,18 +33,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<String> register(user registerRequestDto) {
-//        input requestBody = input.builder().user(registerRequestDto).build();
-        Map<String,Object> requestBody = new HashMap<>();
-        Map<String,Object> userMap = new HashMap<>();
-        userMap.put("user",registerRequestDto);
-        requestBody.put("input",userMap);
-        String uri = "http://test.narayanatutorial.com:8991/am/json/realms/root/realms/test/selfservice/userRegistration?_action=submitRequirements";
+    public ResponseDto adminLogin(LoginRequestDto requestDto) {
+        return loginService.adminLogin(requestDto);
+    }
 
-        System.out.println(requestBody);
-        ResponseEntity<String> stringResponseEntity = apiCallUtil.callAPI(HttpMethod.POST, null, requestBody, uri, null);
-        System.out.println("stringResponseEntity " + stringResponseEntity);
-        return stringResponseEntity;
+    @Override
+    public ResponseDto register(user registerRequestDto) {
+
+        return registerService.register(registerRequestDto);
     }
 
     @Override

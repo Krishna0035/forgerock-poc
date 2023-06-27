@@ -2,8 +2,6 @@ package com.security.security.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.security.security.JwtAuthenticationEntryPoint;
-import com.security.security.JwtAuthenticationFilter;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -46,7 +43,8 @@ public class SecurityConfig {
             "/favicon.ico","/swagger-ui/swagger-ui.css","/swagger-ui/index.css",
             "/swagger-ui/swagger-initializer.js",
             "/bus/v3/api-docs/", "/add/password","/swagger-ui/swagger-ui-standalone-preset.js",
-            "/webjars/**","/swagger-ui/swagger-ui-bundle.js","/v3/api-docs/swagger-config","/v3/api-docs","/authentication/register",
+
+            "/webjars/**","/swagger-ui/swagger-ui-bundle.js","/v3/api-docs/swagger-config","/v3/api-docs","/authentication/login/admin","/authentication/register",
             "/authentication/login", "/login", "/login.jsp","/loginnn","/party/customer","/swagger-ui/favicon-32x32.png","/demo"};
 
     @Autowired
@@ -105,9 +103,12 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors(withDefaults())
                 .authorizeHttpRequests((authz) -> authz
-                                .antMatchers("/swagger-ui/index.html","/login","/demo").permitAll()
+
+                                .antMatchers("/swagger-ui/index.html","/authentication/login","/authentication/login/admin","/authentication/register").permitAll()
+
                         .antMatchers(URLS_THAT_DONT_NEED_AUTHENTICATION).permitAll()
                         .antMatchers("/test/test").hasRole("USER")
+                        .antMatchers("/test/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
