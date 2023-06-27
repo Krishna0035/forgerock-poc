@@ -3,7 +3,10 @@ package com.security.security.ServiceImpl;
 import com.security.security.JwtUserDetailService;
 import com.security.security.JwtUtils;
 import com.security.security.dto.request.LoginRequestDto;
+import com.security.security.dto.response.ResponseDto;
 import com.security.security.exception.ServiceException;
+import com.security.security.externalservice.ForgerockService;
+import com.security.security.externalservice.dto.ForgerockLoginRequestDto;
 import com.security.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,13 +36,16 @@ public class LoginService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public String login(LoginRequestDto request){
+    @Autowired
+    private ForgerockService forgerockService;
+
+    public ResponseDto login(LoginRequestDto request){
 
 
-        UserDetails userDetails = getUserDetails(request.getEmail());
+//        UserDetails userDetails = getUserDetails(request.getEmail());
 
 
-        return getJwtToken(userDetails,request);
+        return getToken(request);
     }
 
     private UserDetails getUserDetails(String email){
@@ -47,31 +53,34 @@ public class LoginService {
     }
 
 
-    private String getJwtToken(UserDetails userDetails , LoginRequestDto request){
+    private ResponseDto getToken( LoginRequestDto request){
 
 
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails,request.getPassword()));
-        }catch (DisabledException e){
-            throw new ServiceException("User Disabled", HttpStatus.UNAUTHORIZED);
-        }catch (BadCredentialsException e){
-            throw new ServiceException("Invalid Credential",HttpStatus.UNAUTHORIZED);
-        }catch (Exception e){
-            throw new ServiceException("Invalid Credential",HttpStatus.UNAUTHORIZED);
-        }
+//        try {
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails,request.getPassword()));
+//        }catch (DisabledException e){
+//            throw new ServiceException("User Disabled", HttpStatus.UNAUTHORIZED);
+//        }catch (BadCredentialsException e){
+//            throw new ServiceException("Invalid Credential",HttpStatus.UNAUTHORIZED);
+//        }catch (Exception e){
+//            throw new ServiceException("Invalid Credential",HttpStatus.UNAUTHORIZED);
+//        }
+//
+//
+//        Map<String ,Object> claims = new HashMap<>();
+//
+//        claims.put("channel",request.getChannel());
+//        claims.put("status",userDetails.isEnabled());
+//
+//
+//        String token = jwtUtils.generateToken(userDetails,claims);
 
 
-        Map<String ,Object> claims = new HashMap<>();
+        ForgerockLoginRequestDto forgerockLoginRequestDto = ForgerockLoginRequestDto.builder()
+                .username(request.getEmail())
+                .password(request.getPassword())
+                .build();
 
-        claims.put("channel",request.getChannel());
-        claims.put("status",userDetails.isEnabled());
-
-
-        String token = jwtUtils.generateToken(userDetails,claims);
-
-
-
-
-        return token;
+        return forgerockService.login(forgerockLoginRequestDto);
     }
 }

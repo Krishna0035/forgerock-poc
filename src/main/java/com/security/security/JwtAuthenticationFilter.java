@@ -2,15 +2,19 @@ package com.security.security;
 
 
 
+import com.google.gson.Gson;
 import com.security.security.config.SecurityConfig;
 import com.security.security.dto.UserToken;
+import com.security.security.dto.response.ResponseDto;
 import com.security.security.entity.User;
+import com.security.security.externalservice.ForgerockService;
 import com.security.security.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
@@ -46,41 +52,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	@Value("${active}")
 	private Integer active;
 	
-
+	@Autowired
+	private ForgerockService forgerockService;
 	
 	@Autowired
 	private Environment environment;
+
+	@Autowired
+	private Gson gson;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		
-		final String requestTokenHeader = request.getHeader("Authorization");
+		final String requestTokenHeader = request.getHeader("token");
+		final String username = request.getHeader("username");
 //		System.out.println(request.getRequestURI());
 		String mobile = null;
 		String jwtToken = null;
 		// JWT Token is in the form "Bearer token". Remove Bearer word and get
 		// only the Token
 		logger.info(" incoming token = "+requestTokenHeader);
-		if (requestTokenHeader != null) {
-
-			if(requestTokenHeader.startsWith("Bearer ")){
-				jwtToken = requestTokenHeader.substring(7);
-			}else {
-				jwtToken=requestTokenHeader;
-			}
-
-
-			try {
-				mobile = jwtUtils.getUsernameFromToken(jwtToken);
-			} catch (IllegalArgumentException e) {
-				System.out.println("Unable to get JWT Token");
-			} catch (ExpiredJwtException e) {
-				System.out.println("JWT Token has expired");
-			}
-		} else {
-			logger.warn("JWT Token does not begin with Bearer String");
-		}
+//		if (requestTokenHeader != null) {
+//
+////			if(requestTokenHeader.startsWith("Bearer ")){
+////				jwtToken = requestTokenHeader.substring(7);
+////			}else {
+////				jwtToken=requestTokenHeader;
+////			}
+//
+//
+////			try {
+////				mobile = jwtUtils.getUsernameFromToken(jwtToken);
+////			} catch (IllegalArgumentException e) {
+////				System.out.println("Unable to get JWT Token");
+////			} catch (ExpiredJwtException e) {
+////				System.out.println("JWT Token has expired");
+////			}
+//		} else {
+//			logger.warn("JWT Token does not begin with Bearer String");
+//		}
 
 		// Once we get the token validate it.
 		if (mobile != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -94,16 +105,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 
 
-			boolean isTokenActiveAndUserActiveBool = Boolean.parseBoolean(responseMap.get("isTokenActiveAndUserActive").toString());
+			boolean isTokenActiveAndUserActiveBool =isValidToken(requestTokenHeader,username);
 
-			Object principle = responseMap.get("principle");
 
-			UserDetails userDetails = (UserDetails) responseMap.get("userDetails");
+			Object principle = getPrinciple(requestTokenHeader,username);
+
+//			Object principle = responseMap.get("principle");
+//
+//			UserDetails userDetails = (UserDetails) responseMap.get("userDetails");
 
 			if (isTokenActiveAndUserActiveBool)
 			{
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						principle, null, userDetails.getAuthorities());
+						principle, null, Arrays.asList("ROLE_USER").stream()
+						.map(role -> new SimpleGrantedAuthority(role))
+						.collect(Collectors.toList()));
 				usernamePasswordAuthenticationToken
 						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				// After setting the Authentication in the context, we specify
@@ -154,13 +170,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 
 
-	private UserToken getPrinciple(User user,String token){
+	private UserToken getPrinciple(String username,String token){
 
 		UserToken principal=new UserToken();
-		principal.setId(user.getId());
-		principal.setStatus(user.getStatus());
-		principal.setUsername(user.email);
-		principal.setUser(user);
+//		principal.setId(user.getId());
+		principal.setStatus(1);
+		principal.setUsername(username);
+//		principal.setUser(user);
 		principal.setToken(token);
 
 		return principal;
@@ -168,5 +184,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 
 
+	private boolean isValidToken(String token,String username){
+
+		ResponseDto userDetails = forgerockService.getUserDetails(token, username);
+
+		Map<String ,Object> map = gson.fromJson(gson.toJson(userDetails.getData()), Map.class);
+
+		List<String> roles = gson.fromJson(gson.toJson(map.get("roles")), List.class);
+
+		if(roles.size()>0 && roles.contains("ui-self-service-user")){
+			return true;
+		}else {
+			return false;
+		}
+
+	}
 
 }

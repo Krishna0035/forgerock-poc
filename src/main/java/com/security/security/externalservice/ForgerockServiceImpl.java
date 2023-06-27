@@ -51,7 +51,7 @@ public class ForgerockServiceImpl implements ForgerockService{
 
         Map<String, List<String>> headers = new HashMap<>();
 
-        headers.put("Content-Type",List.of("application/json"));
+//        headers.put("Content-Type",List.of("application/json"));
         headers.put("X-OpenAM-Username",List.of(request.getUsername()));
         headers.put("X-OpenAM-Password",List.of(request.getPassword()));
         headers.put("Accept-API-Version",List.of("resource=2.0, protocol=1.0"));
@@ -70,7 +70,26 @@ public class ForgerockServiceImpl implements ForgerockService{
     }
 
     @Override
-    public ResponseDto getUserDetails(String token) {
-        return null;
+    public ResponseDto getUserDetails(String token,String username) {
+        String url = "http://"+realmName+"."+domainName+":"+port+basePath+realmPath+"/users/"+username;
+
+
+        Map<String, List<String>> headers = new HashMap<>();
+
+//        headers.put("Content-Type",List.of("application/json"));
+        headers.put("iPlanetDirectoryPro",List.of(token));
+        headers.put("Accept-API-Version",List.of("resource=2.0, protocol=1.0"));
+
+
+        ResponseEntity<String> response = apiCallUtil.callAPI(HttpMethod.GET, headers, null, url, null);
+
+        ResponseDto responseDto =  ResponseDto.builder()
+                .status(true)
+                .message("Successful")
+                .data(response.getBody())
+                .build();
+
+
+        return responseDto;
     }
 }

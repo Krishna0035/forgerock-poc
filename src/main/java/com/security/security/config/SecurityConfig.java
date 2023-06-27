@@ -42,7 +42,7 @@ public class SecurityConfig {
 
     public static final List<GrantedAuthority> ROLE_USER = AuthorityUtils.createAuthorityList("ROLE_USER");
     public static final String[] URLS_THAT_DONT_NEED_AUTHENTICATION = {
-            "/swagger-ui.html",
+            "/swagger-ui.html","/swagger-ui/index.html",
             "/favicon.ico","/swagger-ui/swagger-ui.css","/swagger-ui/index.css",
             "/swagger-ui/swagger-initializer.js",
             "/bus/v3/api-docs/", "/add/password","/swagger-ui/swagger-ui-standalone-preset.js",
@@ -100,46 +100,47 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-//        http
-//                .authenticationManager(authenticationManager)
-//                .csrf().disable()
-//                .cors(withDefaults())
-//                .authorizeHttpRequests((authz) -> authz
-////                                .antMatchers("/swagger-ui/**").permitAll()
-//                        .antMatchers(URLS_THAT_DONT_NEED_AUTHENTICATION).permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//
-//                .and().addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-
-
-
         http
 //                .authenticationManager(authenticationManager)
                 .csrf().disable()
-                .cors()
-                .and()
-                .authorizeRequests(authorize -> authorize
+                .cors(withDefaults())
+                .authorizeHttpRequests((authz) -> authz
+                                .antMatchers("/swagger-ui/index.html","/login").permitAll()
                         .antMatchers(URLS_THAT_DONT_NEED_AUTHENTICATION).permitAll()
-                        .antMatchers("/swagger-ui/index.html").hasRole("ADMIN")
+                        .antMatchers("/test/tes").hasRole("USER")
                         .anyRequest().authenticated()
                 )
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/login") // Specify the login page URL
-                        .permitAll()
-//                        .defaultSuccessUrl("/swagger-ui/index.html") // Specify the default success URL after authentication
-                )
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
+                .and().addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+
+
+
+//        http
+////                .authenticationManager(authenticationManager)
+//                .csrf().disable()
+//                .cors()
+//                .and()
+//                .authorizeRequests(authorize -> authorize
+//                        .antMatchers(URLS_THAT_DONT_NEED_AUTHENTICATION).permitAll()
+//                        .antMatchers("/swagger-ui/index.html").hasRole("ADMIN")
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(formLogin -> formLogin
+//                        .loginPage("/login") // Specify the login page URL
+//                        .permitAll()
+////                        .defaultSuccessUrl("/swagger-ui/index.html") // Specify the default success URL after authentication
+//                )
+//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .and()
+//                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//
+//        return http.build();
 
 
     }

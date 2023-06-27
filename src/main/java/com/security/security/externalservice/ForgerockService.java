@@ -7,6 +7,6 @@ public interface ForgerockService {
 
     ResponseDto login(ForgerockLoginRequestDto request);
 
-    ResponseDto getUserDetails(String token);
+    ResponseDto getUserDetails(String token,String username);
 
 }
