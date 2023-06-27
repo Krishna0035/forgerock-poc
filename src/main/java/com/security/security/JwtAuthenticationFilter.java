@@ -30,8 +30,8 @@ import java.util.Map;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
-	@Autowired
-	private JwtUserDetailService jwtUserDetailService;
+//	@Autowired
+//	private JwtUserDetailService jwtUserDetailService;
 	
 	@Autowired
 	private JwtUtils jwtUtils;
@@ -88,7 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 			// this will come from respective service
 
-			Map<String, Object> responseMap = isTokenActiveAndUserActive(mobile, jwtToken);
+//			Map<String, Object> responseMap = isTokenActiveAndUserActive(mobile, jwtToken);
 
 
 
@@ -121,36 +121,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	}
 
 
-	private Map<String,Object> isTokenActiveAndUserActive(String email, String token){
-
-
-		UserDetails userDetails = this.jwtUserDetailService.loadUserByUsername(email);
-
-
-		//validates if the username is phone number or mobile address
-		User user = userRepository.findByEmailAndStatus(email, active).orElseThrow(() -> new UsernameNotFoundException("User name not found"));
-
-
-
-
-		Map<String,Object> responseMap = new HashMap<>();
-
-
-
-
-
-
-		boolean isTokenValidForActiveUsers = jwtUtils.validateTokenWExpirationValidation(token, userDetails)
-				&& user.getStatus().equals(active);
-
-		UserToken principleForUser = getPrinciple(user,token);
-
-		responseMap.put("isTokenActiveAndUserActive",isTokenValidForActiveUsers);
-		responseMap.put("principle",principleForUser);
-		responseMap.put("userDetails",userDetails);
-
-		return responseMap;
-	}
+//	private Map<String,Object> isTokenActiveAndUserActive(String email, String token){
+//
+//
+//		UserDetails userDetails = this.jwtUserDetailService.loadUserByUsername(email);
+//
+//
+//		//validates if the username is phone number or mobile address
+//		User user = userRepository.findByEmailAndStatus(email, active).orElseThrow(() -> new UsernameNotFoundException("User name not found"));
+//
+//
+//
+//
+//		Map<String,Object> responseMap = new HashMap<>();
+//
+//
+//
+//
+//
+//
+//		boolean isTokenValidForActiveUsers = jwtUtils.validateTokenWExpirationValidation(token, userDetails)
+//				&& user.getStatus().equals(active);
+//
+//		UserToken principleForUser = getPrinciple(user,token);
+//
+//		responseMap.put("isTokenActiveAndUserActive",isTokenValidForActiveUsers);
+//		responseMap.put("principle",principleForUser);
+//		responseMap.put("userDetails",userDetails);
+//
+//		return responseMap;
+//	}
 
 
 
