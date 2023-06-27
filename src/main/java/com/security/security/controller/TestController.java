@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,7 @@ public class TestController {
 
     @GetMapping("/test")
     @SecurityRequirement(name = "bearer-key")
-    public String test(){
+    public String test(@RequestHeader("token") String token,@RequestHeader("username") String username){
         return "Hello";
     }
 }

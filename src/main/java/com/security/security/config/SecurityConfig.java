@@ -107,7 +107,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
                                 .antMatchers("/swagger-ui/index.html","/login").permitAll()
                         .antMatchers(URLS_THAT_DONT_NEED_AUTHENTICATION).permitAll()
-                        .antMatchers("/test/tes").hasRole("USER")
+                        .antMatchers("/test/test").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -168,8 +168,8 @@ public class SecurityConfig {
     @Bean
     public OpenApiCustomiser customerGlobalHeaderOpenApiCustomiser() {
         return openApi -> openApi.getComponents()
-                .addSecuritySchemes("bearer-key",
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"));
+                .addSecuritySchemes("token",
+                        new SecurityScheme().type(SecurityScheme.Type.HTTP));
     }
 
 

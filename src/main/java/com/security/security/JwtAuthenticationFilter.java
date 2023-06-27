@@ -94,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 //		}
 
 		// Once we get the token validate it.
-		if (mobile != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//		if (mobile != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 
 			// this will come from respective service
@@ -130,9 +130,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			}else {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid User");
 			}
-		}else {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid User");
-		}
+//		}else {
+//			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid User");
+//		}
 		System.out.println("out of filter");
 	}
 

@@ -1,7 +1,9 @@
 package com.security.security.externalservice;
 
+import com.google.gson.Gson;
 import com.security.security.dto.response.ResponseDto;
 import com.security.security.externalservice.dto.ForgerockLoginRequestDto;
+import com.security.security.externalservice.dto.LoginSuccessResponseDto;
 import com.security.security.util.ApiCallUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +43,9 @@ public class ForgerockServiceImpl implements ForgerockService{
     @Value("${basePath}")
     private String basePath;
 
+    @Autowired
+    private Gson gson;
+
     @Override
     public ResponseDto login(ForgerockLoginRequestDto request) {
 
@@ -59,10 +64,12 @@ public class ForgerockServiceImpl implements ForgerockService{
 
         ResponseEntity<String> response = apiCallUtil.callAPI(HttpMethod.POST, headers, null, url, null);
 
+        LoginSuccessResponseDto data = gson.fromJson(response.getBody(), LoginSuccessResponseDto.class);
+
       ResponseDto responseDto =  ResponseDto.builder()
                 .status(true)
                 .message("Successful")
-                .data(response.getBody())
+                .data(data)
                 .build();
 
 
@@ -88,6 +95,7 @@ public class ForgerockServiceImpl implements ForgerockService{
                 .message("Successful")
                 .data(response.getBody())
                 .build();
+
 
 
         return responseDto;
