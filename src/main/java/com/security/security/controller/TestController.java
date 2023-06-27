@@ -19,13 +19,13 @@ public class TestController {
     @GetMapping("/test")
     @SecurityRequirement(name = "bearer-key")
     public String test(@RequestHeader("token") String token,@RequestHeader("username") String username){
-        return "Hello";
+        return "Hello User";
     }
 
 
     @GetMapping("/admin")
     @SecurityRequirement(name = "bearer-key")
     public String admintest(@RequestHeader("token") String token,@RequestHeader("username") String username){
-        return "Hello";
+        return "Hello Admin";
     }
 }
