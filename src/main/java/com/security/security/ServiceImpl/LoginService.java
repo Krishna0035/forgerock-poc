@@ -47,7 +47,7 @@ public class LoginService {
 
 
         ForgerockLoginRequestDto forgerockLoginRequestDto = ForgerockLoginRequestDto.builder()
-                .username(request.getEmail())
+                .username(request.getUsername())
                 .password(request.getPassword())
                 .build();
 
@@ -59,7 +59,7 @@ public class LoginService {
 
 
         ForgerockLoginRequestDto forgerockLoginRequestDto = ForgerockLoginRequestDto.builder()
-                .username(request.getEmail())
+                .username(request.getUsername())
                 .password(request.getPassword())
                 .build();
 

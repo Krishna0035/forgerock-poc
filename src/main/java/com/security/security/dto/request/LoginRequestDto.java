@@ -9,10 +9,8 @@ import lombok.*;
 @Builder
 public class LoginRequestDto {
 
-    private String channel;
-
     @NonNull
-    private String email;
+    private String username;
 
     @NonNull
     private String password;

@@ -44,7 +44,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/logout")
-    public ResponseDto logout(@RequestHeader("token") String token){
+    public ResponseDto logout(@RequestHeader("token") String token,@RequestHeader("username") String username){
         return authenticationService.logout(token);
     }
 
