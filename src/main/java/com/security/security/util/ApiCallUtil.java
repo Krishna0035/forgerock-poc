@@ -41,8 +41,6 @@ public class ApiCallUtil {
     @Value("${fails}")
     private int fail;
 
-//    @Autowired
-//    private RequestResponseLogUtil requestResponseLogUtil;
 
     public ResponseEntity<String> callAPI(HttpMethod httpMethod, Map<String, List<String>> headers, Object body, String url,String type)
     {
@@ -78,39 +76,17 @@ public class ApiCallUtil {
         RequestEntity<Object> request = new RequestEntity<>(body, httpHeaders, httpMethod, uri);
         LocalDateTime requestedAt = LocalDateTime.now(ZoneId.of("UTC"));
         ResponseEntity<String> responseEntity = null;
-//
-//        RequestResponseLogDto logDto = RequestResponseLogDto
-//                .builder()
-////              .ProcessId()
-//                .url(url)
-//                .request(requestStr)
-////           .response(responseEntity.toString())
-//                .type(type)
-//                .requestedAt(requestedAt)
-//                .respondedAt(LocalDateTime.now(ZoneId.of("UTC")))
-////           .Status(success)
-//                .build();
 
         try
         {
             responseEntity = restTemplate.exchange(uri, httpMethod, request, String.class);
 
-//            logDto.setResponse(responseEntity.toString());
-//            logDto.setRespondedAt(LocalDateTime.now(ZoneId.of("UTC")));
-//            logDto.setStatus(success);
-//
-//
-//            requestResponseLogUtil.saveRequestResponseLog(logDto);
         }catch(HttpStatusCodeException e) {
             return ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
                     .body(e.getResponseBodyAsString());
         }
         catch(Exception e)
         {
-//            logDto.setResponse(responseEntity.toString());
-//            logDto.setRespondedAt(LocalDateTime.now(ZoneId.of("UTC")));
-//            logDto.setStatus(fail);
-//            requestResponseLogUtil.saveRequestResponseLog(logDto);
             Map<String, Object> map = new HashMap<>();
             map.put("message", e.getMessage());
             throw new ServiceException(map);

@@ -183,7 +183,6 @@ public class ForgerockServiceImpl implements ForgerockService{
     @Override
     public ResponseDto logout(String token) {
 
-        System.out.println("yes");
 
         String uri = "http://test.narayanatutorial.com:8991/am/json/sessions?_action=logout";
 
